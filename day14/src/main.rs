@@ -21,7 +21,7 @@ pub fn vec_reserved(template: &str, mutations: usize) -> (Vec<u8>, Vec<u8>) {
     let base_insertion_count = template.len() - 1;
     let mut total = template.len();
     let mut it = base_insertion_count;
-    for c in 0..mutations {
+    for _ in 0..mutations {
         total += it;
         it *= 2;
     }
@@ -38,9 +38,8 @@ fn main() {
         count[*b as usize] += 1;
     }
     let polymermapping = mutations(include_str!("../mutations"));
-    for x in 0..10 {
+    for _ in 0..10 {
         let mut pos = 0usize;
-        let TMP = String::from_utf8(src.clone()).unwrap();
         for pair in src.windows(2) {
             let k = (pair[0] as u16) << 8 | pair[1] as u16;
             let insert = polymermapping.get(&k).unwrap();
@@ -50,15 +49,13 @@ fn main() {
             count[*insert as usize] += 1;
         }
         dst.insert(pos, *src.last().unwrap());
-        println!("{} iterations", x + 1);
         std::mem::swap(&mut src, &mut dst);
         unsafe { dst.set_len(0); }
     }
 
     let mut min = 100_000_000;
     let mut max = 0;
-    for (index, x) in count.iter().enumerate().skip(65).take(('Z' as u8 - 'A' as u8) as usize + 1) {
-        print!("{}={} | ", index as u8 as char, *x);
+    for x in count.iter().skip(65).take(('Z' as u8 - 'A' as u8) as usize + 1) {
         min = if *x > 0 { std::cmp::min(min, *x) } else { min };
         max = std::cmp::max(max, *x);
     }
